@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kasir Bu Rina</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+<header>
+  <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="14" fill="#FF8A3D"/><path d="M9 18 12 9h24l3 9z" fill="#fff"/><path d="M9 18h30v3a5 5 0 0 1-10 0 5 5 0 0 1-10 0 5 5 0 0 1-10 0z" fill="#FFE2CC"/><rect x="12" y="25" width="24" height="14" rx="2" fill="#fff"/><rect x="20" y="30" width="8" height="9" fill="#0F766E"/></svg>
+  <div><h1>Warung Bu Rina</h1><p id="tgl"></p></div>
+  <button class="out" id="keluar">Keluar</button><div class="today"><span style="font-size:12px;color:var(--mute)">Omzet hari ini</span><b id="hOmzet">Rp0</b></div>
+</header>
+<nav role="tablist" aria-label="Menu">
+  <button role="tab" data-v="kasir" aria-selected="true">Kasir</button>
+  <button role="tab" data-v="riwayat" aria-selected="false">Laporan</button>
+  <button role="tab" data-v="produk" aria-selected="false">Barang</button>
+</nav>
+
+<section id="kasir" class="view on">
+  <div class="pos">
+    <div>
+      <input id="cari" class="search" type="search" placeholder="Cari barang, misalnya es teh" aria-label="Cari barang">
+      <div class="chips" id="chips"></div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <aside class="cart" id="cart" aria-label="Pesanan">
+      <div class="cart-head"><h2>Pesanan</h2><span><button class="link" id="kosong">Kosongkan</button><button class="link cart-close" id="tutup" style="color:var(--mute)">Tutup</button></span></div>
+      <div class="lines" id="lines"></div>
+      <div class="total"><span>Total</span><b id="tot">Rp0</b></div>
+      <button class="btn" id="bayar" disabled>Bayar</button>
+    </aside>
+  </div>
+</section>
+
+<section id="riwayat" class="view">
+  <div class="stats" id="stats"></div>
+  <div class="card"><div class="top"><h2>Omzet 7 hari terakhir</h2><a class="btn sec csv" id="csv" href="api.php?aksi=csv">Unduh CSV</a></div><div id="chart"></div></div>
+  <div class="card"><div class="top"><h2>Terlaris hari ini</h2></div><div id="best"></div></div>
+  <div class="card"><div class="top"><h2>Transaksi hari ini</h2><button class="btn sec" id="salin">Salin laporan</button></div><div id="hist"></div></div>
+</section>
+
+<section id="produk" class="view">
+  <div class="top"><h2 style="margin:0;font-size:17px">Daftar barang</h2><button class="btn" id="tambah">Tambah barang</button></div>
+  <div class="card" id="plist"></div>
+</section>
+</div>
+
+<div class="bar" id="bar"><button id="bukaCart"><span id="barN">0 barang</span><span id="barT">Lihat pesanan Rp0</span></button></div>
+
+<div class="ov" id="ovBayar"><div class="modal" role="dialog" aria-modal="true" aria-label="Pembayaran">
+  <h3>Pembayaran</h3>
+  <div class="seg" id="metode"><button class="on" data-m="Tunai">Tunai</button><button data-m="QRIS">QRIS</button></div>
+  <div class="two"><div><label for="dk">Diskon</label><input id="dk" class="in" inputmode="numeric" placeholder="0"></div><div><label>Jenis diskon</label><div class="seg" id="dtipe"><button class="on" data-t="rp">Rp</button><button data-t="persen">%</button></div></div></div>
+  <div class="change" style="margin-top:14px"><span id="pLbl">Total belanja</span><b id="pTot" style="color:var(--ink)">Rp0</b></div>
+  <div id="tunai">
+    <label for="uang">Uang diterima</label>
+    <input id="uang" class="in" inputmode="numeric" placeholder="0" autocomplete="off">
+    <div class="quick" id="quick"></div>
+    <div class="change" id="kemb"><span>Kembalian</span><b>Rp0</b></div>
+  </div>
+  <div class="btns"><button class="btn" id="selesai">Selesaikan pembayaran</button><button class="btn ghost" data-close>Kembali</button></div>
+</div></div>
+
+<div class="ov" id="ovStruk"><div class="modal" role="dialog" aria-modal="true" aria-label="Struk">
+  <div class="ok" aria-hidden="true">&#10003;</div>
+  <h3 style="text-align:center">Pembayaran berhasil</h3>
+  <div class="struk" id="struk"></div>
+  <div class="btns"><button class="btn" id="wa">Kirim struk lewat WhatsApp</button><button class="btn sec" id="cetak">Cetak struk</button><button class="btn ghost" data-close>Transaksi baru</button></div>
+</div></div>
+
+<div class="ov" id="ovProd"><div class="modal" role="dialog" aria-modal="true" aria-label="Barang">
+  <h3 id="pjudul">Tambah barang</h3>
+  <div class="two"><div><label for="fE">Ikon (emoji)</label><input id="fE" class="in" maxlength="2" placeholder="🍚"></div>
+  <div><label for="fK">Kategori</label><select id="fK" class="in"><option>Makanan</option><option>Minuman</option><option>Snack</option></select></div></div>
+  <label for="fN">Nama barang</label><input id="fN" class="in" placeholder="Nasi uduk">
+  <div class="two"><div><label for="fH">Harga jual</label><input id="fH" class="in" inputmode="numeric" placeholder="8000"></div>
+  <div><label for="fM">Harga modal</label><input id="fM" class="in" inputmode="numeric" placeholder="5000"></div></div>
+  <label for="fS">Stok</label><input id="fS" class="in" inputmode="numeric" placeholder="20">
+  <label for="fF">Foto barang (boleh dikosongkan)</label><input id="fF" type="file" accept="image/*" class="in"><img id="fPrev" alt="Pratinjau foto" style="display:none;width:90px;height:90px;object-fit:cover;border-radius:12px;margin-top:8px">
+  <div class="btns"><button class="btn" id="simpan">Simpan barang</button><button class="btn del" id="hapus" style="display:none">Hapus barang</button><button class="btn ghost" data-close>Batal</button></div>
+</div></div>
+<div id="login"><div class="lbox"><svg viewBox="0 0 120 70" width="150" aria-hidden="true"><rect x="14" y="30" width="92" height="36" rx="4" fill="#D9F1EE"/><path d="M8 30 18 8h84l10 22z" fill="#0F766E"/><path d="M8 30h104v4a10 10 0 0 1-20 0 10 10 0 0 1-20 0 10 10 0 0 1-20 0 10 10 0 0 1-20 0 10 10 0 0 1-20 0z" fill="#FF8A3D"/><rect x="50" y="42" width="20" height="24" rx="2" fill="#0B5E58"/><circle cx="92" cy="48" r="7" fill="#fff"/><path d="M89 48h6M92 45v6" stroke="#0F766E" stroke-width="2"/></svg><h2>Warung Bu Rina</h2><p>Masuk untuk mulai berjualan</p><label for="lu">Nama pengguna</label><input id="lu" class="in" autocomplete="username"><label for="lp">Kata sandi</label><input id="lp" type="password" class="in" autocomplete="current-password"><div id="lerr" role="alert"></div><button class="btn" id="masuk">Masuk</button><p class="hint">Admin: admin / admin123<br>Kasir: kasir / kasir123</p></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
